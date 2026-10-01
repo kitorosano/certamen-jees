@@ -1,0 +1,207 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <main class="preview">
+    <div id="content" class="content">
+      <p class="waiting">Esperando una pregunta...</p>
+    </div>
+    <div id="effect" class="effect-overlay" aria-hidden="true"></div>
+  </main>
+</Layout>
+
+<script>
+  // @ts-expect-error canvas-confetti@1.9.4 does not provide TypeScript declarations.
+  import confetti from "canvas-confetti";
+  import { EFFECT_TIMEOUT, PRESENTATION_CHANNEL } from "../constants";
+  import type { EffectType, PresentationEvent } from "../types";
+  import { EventType } from "../types";
+
+  const $CONTENT = document.querySelector("#content") as HTMLDivElement;
+  const $EFFECT = document.querySelector("#effect") as HTMLDivElement;
+
+  const channel = new BroadcastChannel(PRESENTATION_CHANNEL);
+  let effectTimeout: number | undefined;
+
+  const clearEffect = () => {
+    if (effectTimeout) window.clearTimeout(effectTimeout);
+
+    confetti.reset();
+    $EFFECT.replaceChildren();
+    $EFFECT.className = "effect-overlay";
+  };
+
+  const showPresentation = (message: PresentationEvent) => {
+    clearEffect();
+    $CONTENT.replaceChildren();
+
+    if (!message.payload) return;
+    const { title, answers } = message.payload;
+
+    const $title = document.createElement("h1");
+    $title.textContent = title;
+    $CONTENT.append($title);
+
+    const $answers = document.createElement("ol");
+    $answers.className = "answers";
+
+    for (const answer of answers) {
+      const $item = document.createElement("li");
+      $item.textContent = answer;
+      $answers.append($item);
+    }
+    $CONTENT.append($answers);
+  };
+
+  const showEffect = (type: EffectType) => {
+    clearEffect();
+    $EFFECT.classList.add(`is-${type}`);
+
+    if (type === EventType.EFFECT_CORRECT) {
+      confetti({
+        particleCount: 180,
+        spread: 110,
+        startVelocity: 45,
+        scalar: 1.1,
+        origin: { y: 0.62 },
+        colors: ["#f4c542", "#5263d8", "#ef476f", "#15945d", "#fff"],
+        disableForReducedMotion: true,
+      });
+    }
+
+    effectTimeout = window.setTimeout(clearEffect, EFFECT_TIMEOUT[type]);
+  };
+
+  channel.addEventListener(
+    "message",
+    (event: MessageEvent<PresentationEvent>) => {
+      const message = event.data;
+
+      if (message.type === EventType.PREVIEW_SHOW) {
+        showPresentation(message);
+      }
+
+      if (message.type === EventType.PREVIEW_CLEAR) {
+        clearEffect();
+        $CONTENT.replaceChildren();
+
+        const $waiting = document.createElement("p");
+        $waiting.textContent = "Esperando una pregunta...";
+        $waiting.className = "waiting";
+
+        $CONTENT.append($waiting);
+      }
+
+      if (
+        message.type === EventType.EFFECT_CORRECT ||
+        message.type === EventType.EFFECT_INCORRECT
+      ) {
+        showEffect(message.type);
+      }
+
+      if (message.type === EventType.EFFECT_CLEAR) clearEffect();
+    },
+  );
+
+  channel.postMessage({ type: EventType.PREVIEW_READY });
+
+  window.addEventListener("beforeunload", () => channel.close());
+</script>
+
+<style>
+  .preview {
+    position: relative;
+    min-height: 100%;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #101827;
+    color: #fff;
+  }
+  .content {
+    position: relative;
+    z-index: 1;
+    width: min(88vw, 1100px);
+    text-align: center;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 7vw, 7rem);
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  .waiting {
+    color: #aab4c8;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+  }
+  .answers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 3rem 0 0;
+    padding: 0;
+    list-style-position: inside;
+    text-align: left;
+  }
+  .answers li {
+    padding: 1.25rem;
+    border: 1px solid #ffffff33;
+    border-radius: 0.75rem;
+    background: #ffffff12;
+    font-size: clamp(1.1rem, 2.5vw, 2rem);
+  }
+  .effect-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .effect-overlay.is-effect-incorrect {
+    background: #c9364ccc;
+    animation: incorrect-fade 1800ms ease-out forwards;
+  }
+  .effect-overlay.is-effect-correct {
+    background: #15945d66;
+    animation: correct-pulse 2600ms ease-in-out forwards;
+  }
+  @keyframes correct-pulse {
+    0% {
+      opacity: 0;
+    }
+    18% {
+      opacity: 1;
+    }
+    35% {
+      opacity: 0.35;
+    }
+    52% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 0.45;
+    }
+    86% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes incorrect-fade {
+    0%,
+    55% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @media (max-width: 650px) {
+    .answers {
+      grid-template-columns: 1fr;
+      margin-top: 2rem;
+    }
+  }
+</style>
