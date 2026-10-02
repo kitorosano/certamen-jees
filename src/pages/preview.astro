@@ -1,18 +1,17 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import PreviewLayout from "../layouts/PreviewLayout.astro";
+
+const WAITING_TEXT = "";
 ---
 
-<Layout>
-  <main class="preview">
-    <div id="content" class="content">
-      <p class="waiting">Esperando una pregunta...</p>
-    </div>
-    <div id="effect" class="effect-overlay" aria-hidden="true"></div>
-  </main>
-</Layout>
+<PreviewLayout>
+  <div id="content" class="content">
+    <p class="waiting">{WAITING_TEXT}</p>
+  </div>
+  <div id="effect" class="effect-overlay" aria-hidden="true"></div>
+</PreviewLayout>
 
 <script>
-  // @ts-expect-error canvas-confetti@1.9.4 does not provide TypeScript declarations.
   import confetti from "canvas-confetti";
   import { EFFECT_TIMEOUT, PRESENTATION_CHANNEL } from "../constants";
   import type { EffectType, PresentationEvent } from "../types";
@@ -110,19 +109,9 @@ import Layout from "../layouts/Layout.astro";
 </script>
 
 <style>
-  .preview {
-    position: relative;
-    min-height: 100%;
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-    background: #101827;
-    color: #fff;
-  }
   .content {
     position: relative;
     z-index: 1;
-    width: min(88vw, 1100px);
     text-align: center;
   }
   h1 {
@@ -196,12 +185,6 @@ import Layout from "../layouts/Layout.astro";
     }
     100% {
       opacity: 0;
-    }
-  }
-  @media (max-width: 650px) {
-    .answers {
-      grid-template-columns: 1fr;
-      margin-top: 2rem;
     }
   }
 </style>
