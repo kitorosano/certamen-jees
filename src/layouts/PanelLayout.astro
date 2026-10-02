@@ -35,9 +35,15 @@ const { title = "Panel de control - Certamen JeeS 2026" } = Astro.props;
 
   .control {
     display: flex;
+    align-items: center;
     justify-content: center;
     gap: 3rem;
     padding: 3rem;
     color: #172033;
+  }
+
+  .control > :global(*) {
+    flex: 1 1 0;
+    min-width: 0;
   }
 </style>

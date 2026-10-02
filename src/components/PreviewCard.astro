@@ -1,0 +1,65 @@
+---
+
+---
+
+<section class="preview-card" aria-labelledby="preview-title">
+  <div class="preview-card-header">
+    <div>
+      <p class="section-label">Previsualización</p>
+    </div>
+    <span class="preview-status">Vista en vivo</span>
+  </div>
+  <iframe
+    src="/preview"
+    title="Previsualización de la presentación"
+    loading="eager"></iframe>
+</section>
+
+<style>
+  .preview-card {
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    border: 1px solid #dfe3ee;
+    border-radius: 1rem;
+    background: #f5f7fc;
+    box-shadow: 0 1rem 2.5rem #17203314;
+  }
+  .preview-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .preview-card-header h2 {
+    margin: 0.3rem 0 0;
+  }
+  .section-label {
+    margin: 0;
+    color: #526079;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .preview-status {
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    background: #dff5e9;
+    color: #137346;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 0;
+    border-radius: 0.7rem;
+    background: #101827;
+  }
+</style>
