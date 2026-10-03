@@ -22,7 +22,9 @@ const questions = defineLiveCollection({
     .transform((data) => ({
       type: QuestionTypes.QUESTION,
       id: data.Id,
-      title: data.Pregunta.split("?")[0] + "?",
+      title: data.Pregunta.includes("?")
+        ? data.Pregunta.split("?")[0]?.trim() + "?"
+        : data.Pregunta,
       description: data.Pregunta.split("?")[1]?.trim() ?? "",
       answers: [
         data["Respuesta Correcta"],
