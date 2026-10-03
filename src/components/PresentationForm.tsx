@@ -42,8 +42,15 @@ export default function PresentationForm({ memories, swordplays }: Props) {
     channelRef.current = channel;
 
     const handleMessage = (event: MessageEvent<PresentationEvent>) => {
-      if (event.data?.type !== EventType.PREVIEW_READY || !currentQuestion)
+      const message = event.data;
+
+      if (message.type === EventType.PREVIEW_CLOSED) {
+        setStatus(t("panel.form.status.default"));
         return;
+      }
+
+      if (message.type !== EventType.PREVIEW_READY || !currentQuestion) return;
+
       channel.postMessage({
         type: EventType.PREVIEW_SHOW,
         payload: currentQuestion,
@@ -75,12 +82,15 @@ export default function PresentationForm({ memories, swordplays }: Props) {
       `/api/questions/${type}/${encodeURIComponent(id)}`,
     );
     const data = await response.json();
+
     if (!response.ok) throw new Error(data.error ?? t("errors.entry"));
+
     return data as QuestionItem;
   };
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     const typedEntry = options.find(
       (entry) =>
         entry.title.trim().toLocaleLowerCase() ===
@@ -98,6 +108,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
     try {
       const question = await fetchQuestion(id);
       setCurrentQuestion(question);
+
       channelRef.current?.postMessage({
         type: EventType.PREVIEW_SHOW,
         payload: question,
@@ -113,6 +124,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
 
   const clear = () => {
     setCurrentQuestion(null);
+
     channelRef.current?.postMessage({
       type: EventType.PREVIEW_CLEAR,
       payload: null,

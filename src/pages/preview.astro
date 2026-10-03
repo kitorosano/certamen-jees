@@ -14,8 +14,7 @@ const { t } = useTranslations();
 
 <script>
   import { EFFECT_TIMEOUT, PRESENTATION_CHANNEL } from "@constants";
-  import type { EffectType, PresentationEvent } from "@types";
-  import { EventType } from "@types";
+  import { EventType, type EffectType, type PresentationEvent } from "@types";
   import { useTranslations } from "@utils/translations";
   import confetti from "canvas-confetti";
 
@@ -109,7 +108,14 @@ const { t } = useTranslations();
 
   channel.postMessage({ type: EventType.PREVIEW_READY });
 
-  window.addEventListener("beforeunload", () => channel.close());
+  window.addEventListener(
+    "beforeunload",
+    () => {
+      channel.postMessage({ type: EventType.PREVIEW_CLOSED, payload: null });
+      channel.close();
+    },
+    { once: true },
+  );
 </script>
 
 <style>

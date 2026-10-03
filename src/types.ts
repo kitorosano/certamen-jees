@@ -13,6 +13,7 @@ export enum QuestionTypes {
 
 export enum EventType {
   PREVIEW_READY = "preview-ready",
+  PREVIEW_CLOSED = "preview-closed",
   PREVIEW_SHOW = "preview-show",
   PREVIEW_CLEAR = "preview-clear",
   EFFECT_CORRECT = "effect-correct",

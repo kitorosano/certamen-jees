@@ -13,11 +13,6 @@ const { t } = useTranslations();
       {t("panel.preview.status.disconnected")}
     </span>
   </div>
-  <iframe
-    id="preview-frame"
-    src="/preview"
-    loading="eager"
-    title={t("panel.preview.subtitle")}></iframe>
 </section>
 
 <script>
@@ -27,16 +22,42 @@ const { t } = useTranslations();
 
   const { t } = useTranslations();
 
-  const $status = document.querySelector(".preview-status") as HTMLSpanElement;
+  const $STATUS = document.querySelector(".preview-status") as HTMLSpanElement;
+  let $IFRAME = document.querySelector(
+    "#preview-frame",
+  ) as HTMLIFrameElement | null;
   const channel = new BroadcastChannel(PRESENTATION_CHANNEL);
+
+  const renderFrame = () => {
+    if ($IFRAME) return;
+
+    $IFRAME = document.createElement("iframe");
+    $IFRAME.id = "preview-frame";
+    $IFRAME.className = "preview-frame";
+    $IFRAME.src = "/preview";
+    $IFRAME.loading = "eager";
+    $IFRAME.title = t("panel.preview.subtitle");
+    document.querySelector(".preview-card")?.append($IFRAME);
+  };
 
   channel.addEventListener(
     "message",
-    (event: MessageEvent<{ type?: EventType }>) => {
-      if (event.data?.type !== EventType.PREVIEW_READY) return;
+    (event: MessageEvent<{ type: EventType }>) => {
+      const message = event.data;
 
-      $status.textContent = t("panel.preview.status.connected");
-      $status.classList.toggle("is-connected", true);
+      if (message.type === EventType.PREVIEW_READY) {
+        renderFrame();
+        $STATUS.textContent = t("panel.preview.status.connected");
+        $STATUS.classList.toggle("is-connected", true);
+        return;
+      }
+
+      if (message.type === EventType.PREVIEW_CLOSED) {
+        $IFRAME?.remove();
+        $IFRAME = null;
+        $STATUS.textContent = t("panel.preview.status.disconnected");
+        $STATUS.classList.toggle("is-connected", false);
+      }
     },
   );
 
@@ -48,6 +69,7 @@ const { t } = useTranslations();
 <style>
   .preview-card {
     width: 100%;
+    aspect-ratio: 16 / 9;
     padding: 1rem;
     box-sizing: border-box;
     border: 1px solid #dfe3ee;
@@ -87,7 +109,7 @@ const { t } = useTranslations();
     background: #dff5e9;
     color: #137346;
   }
-  iframe {
+  :global(.preview-frame) {
     display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
