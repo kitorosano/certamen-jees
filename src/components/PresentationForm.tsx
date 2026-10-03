@@ -36,6 +36,8 @@ export default function PresentationForm({ memories, swordplays }: Props) {
     [memories, swordplays, type],
   );
   const isCitationType = citationTypes.has(type);
+  const readyStatus = (questionType: QuestionTypes) =>
+    t(`panel.form.status.ready_${questionType}`);
 
   useEffect(() => {
     const channel = new BroadcastChannel(PRESENTATION_CHANNEL);
@@ -69,6 +71,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
     setValue("");
     setSelectedId("");
     setOptionsOpen(false);
+    setStatus(readyStatus(nextType));
   };
 
   const selectEntry = (entry: Entry) => {
@@ -99,7 +102,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
     const id = selectedId || typedEntry?.id.toString() || value.trim();
     if (!id) return;
     if (isCitationType && !selectedId && !typedEntry) {
-      setStatus(t("panel.form.status.verse"));
+      setStatus(readyStatus(type));
       return;
     }
 
@@ -124,12 +127,15 @@ export default function PresentationForm({ memories, swordplays }: Props) {
 
   const clear = () => {
     setCurrentQuestion(null);
+    setValue("");
+    setSelectedId("");
+    setOptionsOpen(false);
 
     channelRef.current?.postMessage({
       type: EventType.PREVIEW_CLEAR,
       payload: null,
     });
-    setStatus(t("panel.form.status.cleared"));
+    setStatus(readyStatus(type));
   };
 
   return (
@@ -222,7 +228,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
               previewWindowRef.current = window.open("/preview", "_blank");
               setStatus(
                 previewWindowRef.current
-                  ? t("panel.form.status.ready")
+                  ? readyStatus(type)
                   : t("panel.form.status.error"),
               );
             },

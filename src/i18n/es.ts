@@ -25,15 +25,15 @@ export const es = {
       },
       status: {
         default: "Abre la previsualización para comenzar.",
-        ready: "Ingresa un número de pregunta.",
-        verse: "Selecciona una cita bíblica de la lista.",
+        ready_questions: "Ingresa un número de pregunta.",
+        ready_memories: "Selecciona una cita bíblica de la lista.",
+        ready_swordplays: "Selecciona una cita bíblica de la lista.",
         error:
           "El navegador bloqueó la pestaña. Permite ventanas emergentes e inténtalo de nuevo.",
         loading: "Cargando entrada...",
         showing_questions: "Mostrando la pregunta #{{id}}",
         showing_memories: "Mostrando la cita bíblica",
         showing_swordplays: "Mostrando la cita bíblica",
-        cleared: "Pantalla limpiada.",
       },
       preview_action_title: "Controles de presentación",
       effect_action_title: "Resultado de la respuesta",

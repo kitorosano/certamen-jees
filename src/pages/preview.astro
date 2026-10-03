@@ -48,6 +48,8 @@ const { t } = useTranslations();
     const $answers = document.createElement("ol");
     $answers.className = "answers";
 
+    if (answers.length < 2) return; // No mostrar respuestas si solo es la correcta
+
     for (const answer of answers) {
       const $item = document.createElement("li");
       $item.textContent = answer;
