@@ -1,4 +1,4 @@
-import type { Translation } from "@types";
+import { QuestionTypes, type Translation } from "@types";
 
 export const es = {
   api: {
@@ -10,6 +10,11 @@ export const es = {
     brand: "Certamen JeeS {{year}}",
     title: "¿Qué pregunta quieres mostrar?",
     form: {
+      types: {
+        [QuestionTypes.QUESTION]: "Pregunta",
+        [QuestionTypes.MEMORY]: "Versículo de Memoria",
+        [QuestionTypes.SWORDPLAY]: "Esgrima Bíblico",
+      },
       input: {
         placeholder_question: "Ej: 13",
         placeholder_verse: "Ej. Juan 3:16",
@@ -20,10 +25,10 @@ export const es = {
       },
       status: {
         default: "Abre la previsualización para comenzar.",
-        ready: "Previsualización abierta",
+        ready: "Ingresa un número de pregunta.",
+        verse: "Selecciona una cita bíblica de la lista.",
         error: "El navegador bloqueó la pestaña. Permite ventanas emergentes e inténtalo de nuevo.",
         loading: "Cargando entrada...",
-        verse: "Selecciona una cita bíblica de la lista.",
         showing_questions: "Mostrando la pregunta #{{id}}",
         showing_memories: "Mostrando la cita bíblica",
         showing_swordplays: "Mostrando la cita bíblica",

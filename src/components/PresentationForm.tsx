@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { PRESENTATION_CHANNEL, QuestionTypeLabels } from "@constants";
+import { PRESENTATION_CHANNEL } from "@constants";
 import type { PresentationEvent, QuestionItem } from "@types";
 import { EventType, QuestionTypes } from "@types";
-import ActionSection from "./ActionSection";
 import { useTranslations } from "@utils/translations";
+import { useEffect, useMemo, useRef, useState } from "react";
+import ActionSection from "./ActionSection";
 
 type Entry = {
   id: number;
@@ -18,14 +18,12 @@ type Props = {
 const citationTypes = new Set([QuestionTypes.MEMORY, QuestionTypes.SWORDPLAY]);
 
 export default function PresentationForm({ memories, swordplays }: Props) {
-  const {t} = useTranslations();
+  const { t } = useTranslations();
   const [type, setType] = useState(QuestionTypes.QUESTION);
   const [value, setValue] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [optionsOpen, setOptionsOpen] = useState(false);
-  const [status, setStatus] = useState(
-    t("panel.form.status.default"),
-  );
+  const [status, setStatus] = useState(t("panel.form.status.default"));
   const [currentQuestion, setCurrentQuestion] = useState<QuestionItem | null>(
     null,
   );
@@ -77,8 +75,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
       `/api/questions/${type}/${encodeURIComponent(id)}`,
     );
     const data = await response.json();
-    if (!response.ok)
-      throw new Error(data.error ?? t("errors.entry"));
+    if (!response.ok) throw new Error(data.error ?? t("errors.entry"));
     return data as QuestionItem;
   };
 
@@ -105,16 +102,10 @@ export default function PresentationForm({ memories, swordplays }: Props) {
         type: EventType.PREVIEW_SHOW,
         payload: question,
       });
-      setStatus(
-        t(`panel.form.status.showing_${type}`, { id: question.id })
-      );
+      setStatus(t(`panel.form.status.showing_${type}`, { id: question.id }));
     } catch (error) {
       setCurrentQuestion(null);
-      setStatus(
-        error instanceof Error
-          ? error.message
-          : t("errors.entry"),
-      );
+      setStatus(error instanceof Error ? error.message : t("errors.entry"));
     } finally {
       setLoading(false);
     }
@@ -142,7 +133,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
                 checked={type === questionType}
                 onChange={() => selectType(questionType)}
               />
-              <span>{QuestionTypeLabels[questionType]}</span>
+              <span>{t(`panel.form.types.${questionType}`)}</span>
             </label>
           ))}
         </fieldset>
@@ -155,7 +146,11 @@ export default function PresentationForm({ memories, swordplays }: Props) {
               type="text"
               inputMode={isCitationType ? "text" : "numeric"}
               required
-              placeholder={isCitationType ? t("panel.form.input.placeholder_verse") : t("panel.form.input.placeholder_question")}
+              placeholder={
+                isCitationType
+                  ? t("panel.form.input.placeholder_verse")
+                  : t("panel.form.input.placeholder_question")
+              }
               autoComplete="off"
               role="combobox"
               aria-expanded={optionsOpen}
@@ -192,7 +187,9 @@ export default function PresentationForm({ memories, swordplays }: Props) {
             )}
           </div>
           <button type="submit" disabled={loading}>
-            {loading ? t("panel.form.button.loading") : t("panel.form.button.submit")}
+            {loading
+              ? t("panel.form.button.loading")
+              : t("panel.form.button.submit")}
           </button>
         </div>
         <p id="status" className="status" role="status">
