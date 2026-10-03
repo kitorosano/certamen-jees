@@ -23,12 +23,16 @@ const title = `Panel de control - Certamen JeeS ${YEAR}`;
 
 <style>
   body {
+    min-width: 320px;
+    min-height: 100dvh;
     font-family: Poppins, sans-serif;
     width: 100%;
-    height: 100%;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    background: #101827;
+    color: #fff;
+    color-scheme: dark;
   }
 
   .control {
@@ -36,8 +40,12 @@ const title = `Panel de control - Certamen JeeS ${YEAR}`;
     align-items: center;
     justify-content: center;
     gap: 3rem;
-    padding: 3rem;
-    color: #172033;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    padding: clamp(1rem, 5vw, 3rem);
+    background:
+      radial-gradient(circle at 12% 10%, #27375d 0, transparent 28rem),
+      radial-gradient(circle at 90% 90%, #34214d 0, transparent 25rem);
   }
 
   .control > :global(*) {
