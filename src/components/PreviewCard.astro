@@ -9,10 +9,41 @@ const { t } = useTranslations();
     <div>
       <p class="section-label">{t("panel.preview.subtitle")}</p>
     </div>
-    <span class="preview-status">{t("panel.preview.status.connected")}</span>
+    <span class="preview-status">
+      {t("panel.preview.status.disconnected")}
+    </span>
   </div>
-  <iframe src="/preview" loading="eager"></iframe>
+  <iframe
+    id="preview-frame"
+    src="/preview"
+    loading="eager"
+    title={t("panel.preview.subtitle")}></iframe>
 </section>
+
+<script>
+  import { PRESENTATION_CHANNEL } from "@constants";
+  import { EventType } from "@types";
+  import { useTranslations } from "@utils/translations";
+
+  const { t } = useTranslations();
+
+  const $status = document.querySelector(".preview-status") as HTMLSpanElement;
+  const channel = new BroadcastChannel(PRESENTATION_CHANNEL);
+
+  channel.addEventListener(
+    "message",
+    (event: MessageEvent<{ type?: EventType }>) => {
+      if (event.data?.type !== EventType.PREVIEW_READY) return;
+
+      $status.textContent = t("panel.preview.status.connected");
+      $status.classList.toggle("is-connected", true);
+    },
+  );
+
+  window.addEventListener("beforeunload", () => channel.close(), {
+    once: true,
+  });
+</script>
 
 <style>
   .preview-card {
@@ -45,12 +76,16 @@ const { t } = useTranslations();
   .preview-status {
     padding: 0.35rem 0.6rem;
     border-radius: 999px;
-    background: #dff5e9;
-    color: #137346;
+    background: #ffe2d6;
+    color: #8a1c00;
     font-size: 0.7rem;
     font-weight: 800;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+  }
+  .preview-status.is-connected {
+    background: #dff5e9;
+    color: #137346;
   }
   iframe {
     display: block;
