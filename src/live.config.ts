@@ -22,7 +22,8 @@ const questions = defineLiveCollection({
     .transform((data) => ({
       type: QuestionTypes.QUESTION,
       id: data.Id,
-      title: data.Pregunta,
+      title: data.Pregunta.split("?")[0],
+      description: data.Pregunta.split("?")[1]?.trim() ?? "",
       answers: [
         data["Respuesta Correcta"],
         data["Respuesta Incorrecta 1"],
@@ -50,6 +51,7 @@ const memories = defineLiveCollection({
       type: QuestionTypes.MEMORY,
       id: data.Id,
       title: data.Cita,
+      description: "",
       answers: [data.Versiculo].filter((v): v is string => !!v),
     })),
 });
@@ -69,6 +71,7 @@ const swordplays = defineLiveCollection({
       type: QuestionTypes.SWORDPLAY,
       id: data.Id,
       title: data.Cita,
+      description: "",
       answers: [],
     })),
 });

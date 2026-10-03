@@ -25,6 +25,7 @@ export type QuestionItem = {
   type: QuestionTypes;
   id: number;
   title: string;
+  description: string;
   answers: string[];
 };
 

@@ -68,9 +68,12 @@ const { t } = useTranslations();
 
 <style>
   .preview-card {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     aspect-ratio: 16 / 9;
-    padding: 1rem;
+    min-height: 0;
+    padding: clamp(0.5rem, 1.5vw, 1rem);
     box-sizing: border-box;
     border: 1px solid #dfe3ee;
     border-radius: 1rem;
@@ -82,7 +85,7 @@ const { t } = useTranslations();
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
   }
   .preview-card-header h2 {
     margin: 0.3rem 0 0;
@@ -96,11 +99,11 @@ const { t } = useTranslations();
     text-transform: uppercase;
   }
   .preview-status {
-    padding: 0.35rem 0.6rem;
+    padding: clamp(0.25rem, 0.7vw, 0.35rem) clamp(0.4rem, 1vw, 0.6rem);
     border-radius: 999px;
     background: #ffe2d6;
     color: #8a1c00;
-    font-size: 0.7rem;
+    font-size: clamp(0.55rem, 1vw, 0.7rem);
     font-weight: 800;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -111,11 +114,26 @@ const { t } = useTranslations();
   }
   :global(.preview-frame) {
     display: block;
+    flex: 1;
     width: 100%;
-    aspect-ratio: 16 / 9;
-    height: auto;
+    min-height: 0;
+    height: 0;
     border: 0;
     border-radius: 0.7rem;
     background: #101827;
+  }
+
+  @media (max-width: 34rem) {
+    .preview-card-header {
+      gap: 0.5rem;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+    }
+
+    .preview-status {
+      letter-spacing: 0.02em;
+    }
   }
 </style>
