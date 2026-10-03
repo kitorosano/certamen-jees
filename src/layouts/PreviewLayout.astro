@@ -1,6 +1,8 @@
 ---
+import { useTranslations } from "@utils/translations";
 import { YEAR } from "astro:env/server";
 
+const { t } = useTranslations();
 const title = `Previsualización - Certamen JeeS ${YEAR}`;
 ---
 
@@ -15,6 +17,7 @@ const title = `Previsualización - Certamen JeeS ${YEAR}`;
     <title>{title}</title>
   </head>
   <body>
+    <p class="eyebrow">{t("brand", { year: YEAR })}</p>
     <main class="preview">
       <slot />
     </main>
@@ -25,21 +28,31 @@ const title = `Previsualización - Certamen JeeS ${YEAR}`;
   body {
     font-family: Poppins, sans-serif;
     width: 100%;
-    height: 100%;
+    min-height: 100dvh;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    background: #101827;
+    color: #fff;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.5rem;
+    color: #5263d8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    padding-top: 1rem;
   }
 
   .preview {
     position: relative;
-    min-height: 100dvh;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    background: #101827;
-    color: #fff;
   }
 </style>

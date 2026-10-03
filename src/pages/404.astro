@@ -1,1 +1,333 @@
-<h1>Pregunta no existe</h1>
+---
+import { YEAR } from "astro:env/server";
+import ErrorLayout from "@layouts/ErrorLayout.astro";
+import { useTranslations } from "@utils/translations";
+
+const { t } = useTranslations();
+---
+
+<ErrorLayout>
+  <main class="not-found">
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <section class="error-card" aria-labelledby="error-title">
+      <div class="illustration" aria-hidden="true">
+        <span class="question question-one">?</span>
+        <span class="question question-two">?</span>
+        <div class="paper">
+          <div class="paper-fold"></div>
+          <span class="paper-number">404</span>
+          <span class="paper-line paper-line-long"></span>
+          <span class="paper-line"></span>
+          <span class="paper-line paper-line-short"></span>
+          <span class="paper-check">×</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <p class="eyebrow">{t("brand", { year: YEAR })}</p>
+        <p class="error-code">{t("404.code")}</p>
+        <h1 id="error-title">{t("404.title")}</h1>
+        <p class="description">{t("404.description")}</p>
+        <div class="actions">
+          <a class="primary-action" href="/"
+            >{t("404.home")} <span aria-hidden="true">→</span></a
+          >
+          <button class="secondary-action" type="button" id="go-back">
+            {t("404.back")}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">{t("404.note")}</p>
+  </main>
+</ErrorLayout>
+
+<script>
+  const backButton = document.querySelector("#go-back");
+
+  backButton?.addEventListener("click", () => {
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+
+    window.location.href = "/";
+  });
+</script>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    min-width: 320px;
+    min-height: 100dvh;
+    margin: 0;
+    font-family: Poppins, "Segoe UI", sans-serif;
+  }
+
+  .not-found {
+    position: relative;
+    display: grid;
+    min-height: 100dvh;
+    place-items: center;
+    overflow: hidden;
+    padding: 2rem;
+    background:
+      radial-gradient(circle at 15% 15%, #27375d 0, transparent 28rem),
+      radial-gradient(circle at 88% 90%, #34214d 0, transparent 25rem), #101827;
+    color: #fff;
+  }
+
+  .ambient {
+    position: absolute;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #ffbd72;
+    box-shadow: 0 0 1rem #ffbd72;
+    opacity: 0.8;
+  }
+
+  .ambient-one {
+    top: 18%;
+    left: 11%;
+  }
+
+  .ambient-two {
+    right: 14%;
+    bottom: 21%;
+    width: 0.35rem;
+    height: 0.35rem;
+    background: #8cbbff;
+    box-shadow: 0 0 1rem #8cbbff;
+  }
+
+  .error-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(12rem, 0.85fr) minmax(16rem, 1.15fr);
+    align-items: center;
+    width: min(100%, 52rem);
+    padding: clamp(1.5rem, 5vw, 3.5rem);
+    border: 1px solid #ffffff1c;
+    border-radius: 2rem;
+    background: #172033d9;
+    box-shadow: 0 2rem 5rem #05091466;
+    backdrop-filter: blur(0.9rem);
+  }
+
+  .illustration {
+    position: relative;
+    display: grid;
+    min-height: 15rem;
+    place-items: center;
+  }
+
+  .paper {
+    position: relative;
+    display: flex;
+    width: 10rem;
+    height: 12rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 2.2rem 1.5rem 1.5rem;
+    transform: rotate(-7deg);
+    border-radius: 0.5rem;
+    background: #fffaf0;
+    box-shadow: 0.8rem 1rem 0 #080d1a40;
+    color: #172033;
+  }
+
+  .paper-fold {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2.3rem;
+    height: 2.3rem;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    background: #e7dfd0;
+  }
+
+  .paper-number {
+    color: #e76b4a;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .paper-line {
+    width: 78%;
+    height: 0.25rem;
+    border-radius: 1rem;
+    background: #d9dce5;
+  }
+
+  .paper-line-long {
+    width: 92%;
+  }
+
+  .paper-line-short {
+    width: 52%;
+  }
+
+  .paper-check {
+    position: absolute;
+    right: 1rem;
+    bottom: 0.5rem;
+    color: #e76b4a;
+    font-size: 2.5rem;
+    font-weight: 300;
+  }
+
+  .question {
+    position: absolute;
+    color: #ffbd72;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .question-one {
+    top: 1rem;
+    left: 1.5rem;
+    transform: rotate(-15deg);
+  }
+
+  .question-two {
+    right: 1rem;
+    bottom: 1rem;
+    color: #8cbbff;
+    font-size: 2.5rem;
+    transform: rotate(15deg);
+  }
+
+  .content {
+    max-width: 24rem;
+  }
+
+  .eyebrow,
+  .error-code {
+    margin: 0;
+    color: #ffbd72;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .error-code {
+    margin-top: 1rem;
+    color: #8cbbff;
+  }
+
+  h1 {
+    margin: 0.5rem 0 1rem;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: -0.06em;
+    line-height: 1.05;
+  }
+
+  .description {
+    margin: 0;
+    color: #b8c1d4;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .primary-action,
+  .secondary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.7rem 1rem;
+    border-radius: 0.7rem;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      transform 150ms ease,
+      box-shadow 150ms ease,
+      background 150ms ease;
+  }
+
+  .primary-action {
+    gap: 0.6rem;
+    background: #ffbd72;
+    color: #172033;
+  }
+
+  .primary-action:hover,
+  .primary-action:focus-visible {
+    box-shadow: 0 0.5rem 1.5rem #ffbd7240;
+    transform: translateY(-2px);
+  }
+
+  .secondary-action {
+    border: 1px solid #ffffff2b;
+    background: transparent;
+    color: #dce3f1;
+    cursor: pointer;
+  }
+
+  .secondary-action:hover,
+  .secondary-action:focus-visible {
+    background: #ffffff12;
+  }
+
+  .primary-action:focus-visible,
+  .secondary-action:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+
+  .footer-note {
+    position: absolute;
+    bottom: 1.5rem;
+    margin: 0;
+    color: #8290a9;
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 620px) {
+    .not-found {
+      padding: 1rem;
+    }
+
+    .error-card {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-radius: 1.5rem;
+      text-align: center;
+    }
+
+    .illustration {
+      min-height: 12rem;
+      transform: scale(0.82);
+    }
+
+    .content {
+      max-width: none;
+    }
+
+    .actions {
+      justify-content: center;
+    }
+  }
+</style>
