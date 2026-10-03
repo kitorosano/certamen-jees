@@ -157,6 +157,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
               aria-controls="entry-options"
               value={value}
               onFocus={() => isCitationType && setOptionsOpen(true)}
+              onBlur={() => setOptionsOpen(false)}
               onChange={(event) => {
                 setValue(event.target.value);
                 setSelectedId("");
