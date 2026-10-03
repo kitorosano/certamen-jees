@@ -1,9 +1,8 @@
 ---
-interface Props {
-  title?: string;
-}
+import { getSecret } from "astro:env/server";
 
-const { title = "Panel de control - Certamen JeeS 2026" } = Astro.props;
+const YEAR = getSecret("YEAR");
+const title = `Panel de control - Certamen JeeS ${YEAR}`;
 ---
 
 <!doctype html>

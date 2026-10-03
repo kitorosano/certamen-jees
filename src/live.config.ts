@@ -1,11 +1,16 @@
 import { sheetLiveLoader } from "astro-sheet-loader";
 import { z } from "astro/zod";
 import { defineLiveCollection } from "astro:content";
+import { getSecret } from "astro:env/server";
 import { QuestionTypes } from "./types";
+
+const DOCUMENT_ID = getSecret("DOCUMENT_ID");
+if (!DOCUMENT_ID)
+  throw new Error("DOCUMENT_ID is not defined in the environment variables.");
 
 const questions = defineLiveCollection({
   loader: sheetLiveLoader({
-    document: "1pUB3DTLwqKkFKppWg_51JEZRGhdvE8HVuNyJUvkJys8",
+    document: DOCUMENT_ID,
     sheet: "Preguntas",
     idColumn: "Id",
   }),
@@ -35,35 +40,38 @@ const questions = defineLiveCollection({
 
 const memories = defineLiveCollection({
   loader: sheetLiveLoader({
-    document: "1pUB3DTLwqKkFKppWg_51JEZRGhdvE8HVuNyJUvkJys8",
+    document: DOCUMENT_ID,
     sheet: "Memorias",
     idColumn: "Id",
   }),
   schema: z
     .object({
+      Id: z.number(),
       Cita: z.string(),
+      Versiculo: z.string().optional(),
     })
     .transform((data) => ({
       type: QuestionTypes.MEMORY,
-      id: undefined,
+      id: data.Id,
       title: data.Cita,
-      answers: [],
+      answers: [data.Versiculo].filter((v): v is string => !!v),
     })),
 });
 
 const swordplays = defineLiveCollection({
   loader: sheetLiveLoader({
-    document: "1pUB3DTLwqKkFKppWg_51JEZRGhdvE8HVuNyJUvkJys8",
+    document: DOCUMENT_ID,
     sheet: "Esgrimas",
     idColumn: "Id",
   }),
   schema: z
     .object({
+      Id: z.number(),
       Cita: z.string(),
     })
     .transform((data) => ({
       type: QuestionTypes.SWORDPLAY,
-      id: undefined,
+      id: data.Id,
       title: data.Cita,
       answers: [],
     })),

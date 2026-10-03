@@ -1,7 +1,8 @@
 import { LiveEntryNotFoundError } from "astro/content/runtime";
 import { getLiveEntry } from "astro:content";
-import { QuestionTypes } from "../../../../types";
 import type { QuestionItem } from "../../../../types";
+import { QuestionTypes } from "../../../../types";
+import { Response400, Response404, Response502 } from "../../../../utils";
 
 const allowedTypes = new Set(Object.values(QuestionTypes));
 
@@ -31,32 +32,5 @@ export async function GET({ params }: Props): Promise<Response> {
   if (!entry) return Response404();
 
   const data = entry.data as QuestionItem;
-  const parsedId = Number(id);
-  const item: QuestionItem = {
-    ...data,
-    id: data.id ?? (Number.isFinite(parsedId) ? parsedId : undefined),
-  };
-
-  return Response.json(item);
-}
-
-function Response400(): Response {
-  return Response.json(
-    { error: "Tipo o identificador inválido." },
-    { status: 400 },
-  );
-}
-
-function Response404(): Response {
-  return Response.json(
-    { error: "No se encontró la pregunta solicitada." },
-    { status: 404 },
-  );
-}
-
-function Response502(): Response {
-  return Response.json(
-    { error: "No se pudo cargar la pregunta." },
-    { status: 502 },
-  );
+  return Response.json(data);
 }

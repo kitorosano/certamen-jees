@@ -5,6 +5,7 @@ Panel web para presentar preguntas y contenidos del Certamen JeeS 2026. La aplic
 ## Características principales
 
 - Panel de control en español para seleccionar y mostrar entradas.
+- Formulario interactivo en React con autocompletado separado para memoria y esgrima bíblico.
 - Tres tipos de contenido:
   - **Preguntas**: pregunta con respuestas posibles mezcladas.
   - **Versículos de memoria**: cita para presentar.
@@ -51,7 +52,7 @@ pnpm astro dev --host 0.0.0.0 --port 4321
 1. Abre la página principal en [http://localhost:4321](http://localhost:4321).
 2. Pulsa **Abrir previsualización** para abrir `/preview` en otra pestaña o ventana. Esta vista es la que se puede proyectar.
 3. En el panel, selecciona **Pregunta**, **Versículo de Memoria** o **Esgrima Bíblico**.
-4. Introduce el identificador de la entrada y pulsa **Mostrar**.
+4. Introduce el identificador de la entrada y pulsa **Mostrar**. Para **Versículo de Memoria** y **Esgrima Bíblico**, escribe o selecciona la cita bíblica (por ejemplo, `Juan 3:16`) usando el autocompletado.
 5. Usa **Correcta** o **Incorrecta** para mostrar el efecto visual correspondiente.
 6. Pulsa **Limpiar pantalla** antes de presentar la siguiente entrada.
 

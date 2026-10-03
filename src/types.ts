@@ -15,7 +15,7 @@ export enum EventType {
 
 export type QuestionItem = {
   type: QuestionTypes;
-  id?: number;
+  id: number;
   title: string;
   answers: string[];
 };

@@ -1,73 +1,28 @@
 ---
-import { QuestionTypeLabels } from "../constants";
-import { QuestionTypes } from "../types";
+import { getLiveCollection } from "astro:content";
+import PresentationForm from "./PresentationForm";
+
+const [memories, swordplays] = await Promise.all([
+  getLiveCollection("memories"),
+  getLiveCollection("swordplays"),
+]);
+if (!memories?.entries || !swordplays?.entries) {
+  throw new Error("No se pudieron cargar las entradas de memoria y swordplay.");
+}
 ---
 
 <section class="panel">
   <p class="eyebrow">Certamen JeeS 2026</p>
   <h1>¿Qué pregunta quieres mostrar?</h1>
 
-  <form id="presentation-form">
-    <fieldset>
-      {
-        Object.values(QuestionTypes).map((type) => (
-          <label class="type-option">
-            <input
-              type="radio"
-              name="type"
-              value={type}
-              checked={type === QuestionTypes.QUESTION}
-            />
-            <span>{QuestionTypeLabels[type]}</span>
-          </label>
-        ))
-      }
-    </fieldset>
-
-    <div class="id-row">
-      <input
-        id="entry-id"
-        name="id"
-        type="text"
-        inputmode="numeric"
-        required
-        placeholder="Ej. 1"
-      />
-      <button type="submit">Mostrar</button>
-    </div>
-    <p id="status" class="status" role="status">
-      Abre la previsualización para comenzar.
-    </p>
-  </form>
-
-  <section class="presentation-actions" aria-label="Controles de presentación">
-    <p class="section-label">Presentación</p>
-    <div class="actions">
-      <button id="open-preview" type="button" class="secondary">
-        Abrir previsualización
-      </button>
-      <button id="clear" type="button" class="secondary" disabled>
-        Limpiar pantalla
-      </button>
-    </div>
-  </section>
-
-  <section class="answer-actions" aria-label="Resultado de la respuesta">
-    <p class="section-label">Resultado de la respuesta</p>
-    <div class="answer-buttons">
-      <button id="correct" type="button" class="correct" disabled>
-        <span aria-hidden="true">✓</span>
-        Correcta
-      </button>
-      <button id="incorrect" type="button" class="incorrect" disabled>
-        <span aria-hidden="true">✕</span>
-        Incorrecta
-      </button>
-    </div>
-  </section>
+  <PresentationForm
+    client:load
+    memories={memories.entries.map(({ data }) => data)}
+    swordplays={swordplays.entries.map(({ data }) => data)}
+  />
 </section>
 
-<style>
+<style is:global>
   .panel {
     width: 100%;
   }
@@ -142,13 +97,52 @@ import { QuestionTypes } from "../types";
     display: flex;
     gap: 0.75rem;
   }
-  input[type="text"] {
+  .combobox {
+    position: relative;
     min-width: 0;
     flex: 1;
+  }
+  input[type="text"] {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     padding: 0.8rem;
     border: 1px solid #ccd3e1;
     border-radius: 0.5rem;
     font: inherit;
+  }
+  .options {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 0.35rem);
+    right: 0;
+    left: 0;
+    max-height: 16rem;
+    overflow-y: auto;
+    padding: 0.35rem;
+    border: 1px solid #ccd3e1;
+    border-radius: 0.6rem;
+    background: #fff;
+    box-shadow: 0 0.75rem 1.75rem #26324726;
+  }
+  .option {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: auto;
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.4rem;
+    background: transparent;
+    color: #263247;
+    font-weight: 400;
+    text-align: left;
+  }
+  .option:hover,
+  .option:focus-visible {
+    background: #eef0ff;
+    color: #3949b8;
+    outline: 0;
+    transform: none;
   }
   button {
     min-height: 2.75rem;
@@ -227,127 +221,3 @@ import { QuestionTypes } from "../types";
     gap: 0.5rem;
   }
 </style>
-
-<script>
-  import { PRESENTATION_CHANNEL } from "../constants";
-  import type { PresentationEvent, QuestionItem } from "../types";
-  import { EventType } from "../types";
-
-  const $FORM = document.querySelector("#presentation-form") as HTMLFormElement;
-  const $INPUT = document.querySelector("#entry-id") as HTMLInputElement;
-  const $STATUS = document.querySelector("#status") as HTMLParagraphElement;
-  const $BTN_PREVIEW = document.querySelector(
-    "#open-preview",
-  ) as HTMLButtonElement;
-  const $BTN_CLEAR = document.querySelector("#clear") as HTMLButtonElement;
-  const $BTN_CORRECT = document.querySelector("#correct") as HTMLButtonElement;
-  const $BTN_INCORRECT = document.querySelector(
-    "#incorrect",
-  ) as HTMLButtonElement;
-
-  const channel = new BroadcastChannel(PRESENTATION_CHANNEL);
-  let currentQuestion: QuestionItem | null = null;
-  let previewWindow: Window | null = null;
-
-  const toggleAnswerButtons = (enabled: boolean) => {
-    $BTN_CORRECT.disabled = !enabled;
-    $BTN_INCORRECT.disabled = !enabled;
-    $BTN_CLEAR.disabled = !enabled;
-  };
-
-  $BTN_PREVIEW.addEventListener("click", () => {
-    previewWindow = window.open("/preview", "_blank");
-    if (!previewWindow) {
-      $STATUS.textContent =
-        "El navegador bloqueó la pestaña. Permite ventanas emergentes e inténtalo de nuevo.";
-      return;
-    }
-    $STATUS.textContent = "Previsualización abierta.";
-  });
-
-  const fetchQuestion = async (type: string, id: string) => {
-    try {
-      const url = `/api/questions/${type}/${encodeURIComponent(id)}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      if (!response.ok)
-        throw new Error(data.error ?? "No se pudo cargar la entrada.");
-
-      return data as QuestionItem;
-    } catch (error) {
-      throw error instanceof Error
-        ? error
-        : new Error("No se pudo cargar la entrada.");
-    }
-  };
-
-  $FORM.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const type = new FormData($FORM).get("type");
-    const id = $INPUT.value.trim();
-    if (!type || !id) return;
-
-    $STATUS.textContent = "Cargando entrada...";
-    toggleAnswerButtons(false);
-
-    try {
-      currentQuestion = await fetchQuestion(type.toString(), id);
-
-      channel.postMessage({
-        type: EventType.PREVIEW_SHOW,
-        payload: currentQuestion,
-      });
-      toggleAnswerButtons(true);
-      $STATUS.textContent = `Mostrando ${currentQuestion.type === "questions" ? "la pregunta" : "el contenido"}${currentQuestion.id ? ` #${currentQuestion.id}` : ""}.`;
-    } catch (error: any) {
-      currentQuestion = null;
-      toggleAnswerButtons(false);
-      $STATUS.textContent = error.message;
-    }
-  });
-
-  $BTN_CORRECT.addEventListener("click", () => {
-    if (!currentQuestion) return;
-
-    channel.postMessage({
-      type: EventType.EFFECT_CORRECT,
-      payload: currentQuestion,
-    });
-  });
-
-  $BTN_INCORRECT.addEventListener("click", () => {
-    if (!currentQuestion) return;
-
-    channel.postMessage({
-      type: EventType.EFFECT_INCORRECT,
-      payload: currentQuestion,
-    });
-  });
-
-  $BTN_CLEAR.addEventListener("click", () => {
-    currentQuestion = null;
-    channel.postMessage({
-      type: EventType.PREVIEW_CLEAR,
-      payload: currentQuestion,
-    });
-
-    toggleAnswerButtons(false);
-    $STATUS.textContent = "Pantalla limpiada.";
-  });
-
-  channel.addEventListener(
-    "message",
-    (event: MessageEvent<PresentationEvent>) => {
-      if (event.data?.type !== EventType.PREVIEW_READY) return;
-      if (!currentQuestion) return;
-
-      channel.postMessage({
-        type: EventType.PREVIEW_SHOW,
-        payload: currentQuestion,
-      });
-    },
-  );
-
-  window.addEventListener("beforeunload", () => channel.close());
-</script>
