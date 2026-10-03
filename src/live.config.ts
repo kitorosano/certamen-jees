@@ -1,12 +1,8 @@
 import { sheetLiveLoader } from "astro-sheet-loader";
 import { z } from "astro/zod";
 import { defineLiveCollection } from "astro:content";
-import { getSecret } from "astro:env/server";
+import { DOCUMENT_ID } from "astro:env/server";
 import { QuestionTypes } from "./types";
-
-const DOCUMENT_ID = getSecret("DOCUMENT_ID");
-if (!DOCUMENT_ID)
-  throw new Error("DOCUMENT_ID is not defined in the environment variables.");
 
 const questions = defineLiveCollection({
   loader: sheetLiveLoader({

@@ -1,7 +1,6 @@
 ---
-import { getSecret } from "astro:env/server";
+import { YEAR } from "astro:env/server";
 
-const YEAR = getSecret("YEAR");
 const title = `Panel de control - Certamen JeeS ${YEAR}`;
 ---
 
