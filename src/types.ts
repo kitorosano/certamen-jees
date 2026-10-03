@@ -1,3 +1,10 @@
+export type TranslationValue = string | Translation;
+export interface Translation {
+  [key: string]: TranslationValue;
+}
+export type TranslationModule = Record<string, Translation>;
+export type TranslationParams = Record<string, string | number | boolean>;
+
 export enum QuestionTypes {
   QUESTION = "questions",
   MEMORY = "memories",

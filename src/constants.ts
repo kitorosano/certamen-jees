@@ -1,5 +1,11 @@
 import { EventType, QuestionTypes } from "./types";
 
+export enum LANGUAGES {
+  ES = "es",
+}
+
+export const DEFAULT_LANG = LANGUAGES.ES;
+
 export const QuestionTypeLabels: Record<QuestionTypes, string> = {
   [QuestionTypes.QUESTION]: "Pregunta",
   [QuestionTypes.MEMORY]: "Versiculo de Memoria",

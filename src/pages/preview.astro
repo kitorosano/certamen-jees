@@ -1,21 +1,25 @@
 ---
 import PreviewLayout from "@layouts/PreviewLayout.astro";
+import { useTranslations } from "@utils/translations";
 
-const WAITING_TEXT = "";
+const { t } = useTranslations();
 ---
 
 <PreviewLayout>
   <div id="content" class="content">
-    <p class="waiting">{WAITING_TEXT}</p>
+    <p class="waiting">{t("preview.waiting")}</p>
   </div>
   <div id="effect" class="effect-overlay" aria-hidden="true"></div>
 </PreviewLayout>
 
 <script>
-  import confetti from "canvas-confetti";
   import { EFFECT_TIMEOUT, PRESENTATION_CHANNEL } from "@constants";
   import type { EffectType, PresentationEvent } from "@types";
   import { EventType } from "@types";
+  import { useTranslations } from "@utils/translations";
+  import confetti from "canvas-confetti";
+
+  const { t } = useTranslations();
 
   const $CONTENT = document.querySelector("#content") as HTMLDivElement;
   const $EFFECT = document.querySelector("#effect") as HTMLDivElement;
@@ -86,7 +90,7 @@ const WAITING_TEXT = "";
         $CONTENT.replaceChildren();
 
         const $waiting = document.createElement("p");
-        $waiting.textContent = "Esperando una pregunta...";
+        $waiting.textContent = t("preview.waiting");
         $waiting.className = "waiting";
 
         $CONTENT.append($waiting);

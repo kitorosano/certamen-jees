@@ -1,18 +1,17 @@
 ---
+import { useTranslations } from "@utils/translations";
 
+const { t } = useTranslations();
 ---
 
 <section class="preview-card" aria-labelledby="preview-title">
   <div class="preview-card-header">
     <div>
-      <p class="section-label">Previsualización</p>
+      <p class="section-label">{t("panel.preview.subtitle")}</p>
     </div>
-    <span class="preview-status">Vista en vivo</span>
+    <span class="preview-status">{t("panel.preview.status.connected")}</span>
   </div>
-  <iframe
-    src="/preview"
-    title="Previsualización de la presentación"
-    loading="eager"></iframe>
+  <iframe src="/preview" loading="eager"></iframe>
 </section>
 
 <style>

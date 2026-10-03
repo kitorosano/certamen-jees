@@ -3,6 +3,7 @@ import { PRESENTATION_CHANNEL, QuestionTypeLabels } from "@constants";
 import type { PresentationEvent, QuestionItem } from "@types";
 import { EventType, QuestionTypes } from "@types";
 import ActionSection from "./ActionSection";
+import { useTranslations } from "@utils/translations";
 
 type Entry = {
   id: number;
@@ -17,12 +18,13 @@ type Props = {
 const citationTypes = new Set([QuestionTypes.MEMORY, QuestionTypes.SWORDPLAY]);
 
 export default function PresentationForm({ memories, swordplays }: Props) {
+  const {t} = useTranslations();
   const [type, setType] = useState(QuestionTypes.QUESTION);
   const [value, setValue] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [status, setStatus] = useState(
-    "Abre la previsualización para comenzar.",
+    t("panel.form.status.default"),
   );
   const [currentQuestion, setCurrentQuestion] = useState<QuestionItem | null>(
     null,
@@ -76,7 +78,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
     );
     const data = await response.json();
     if (!response.ok)
-      throw new Error(data.error ?? "No se pudo cargar la entrada.");
+      throw new Error(data.error ?? t("errors.entry"));
     return data as QuestionItem;
   };
 
@@ -90,12 +92,12 @@ export default function PresentationForm({ memories, swordplays }: Props) {
     const id = selectedId || typedEntry?.id.toString() || value.trim();
     if (!id) return;
     if (isCitationType && !selectedId && !typedEntry) {
-      setStatus("Selecciona una cita bíblica de la lista.");
+      setStatus(t("panel.form.status.verse"));
       return;
     }
 
     setLoading(true);
-    setStatus("Cargando entrada...");
+    setStatus(t("panel.form.status.loading"));
     try {
       const question = await fetchQuestion(id);
       setCurrentQuestion(question);
@@ -104,14 +106,14 @@ export default function PresentationForm({ memories, swordplays }: Props) {
         payload: question,
       });
       setStatus(
-        `Mostrando la ${question.type === QuestionTypes.QUESTION ? `pregunta #${question.id}` : "cita bíblica"}`,
+        t(`panel.form.status.showing_${type}`, { id: question.id })
       );
     } catch (error) {
       setCurrentQuestion(null);
       setStatus(
         error instanceof Error
           ? error.message
-          : "No se pudo cargar la entrada.",
+          : t("errors.entry"),
       );
     } finally {
       setLoading(false);
@@ -124,7 +126,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
       type: EventType.PREVIEW_CLEAR,
       payload: null,
     });
-    setStatus("Pantalla limpiada.");
+    setStatus(t("panel.form.status.cleared"));
   };
 
   return (
@@ -153,7 +155,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
               type="text"
               inputMode={isCitationType ? "text" : "numeric"}
               required
-              placeholder={isCitationType ? "Ej. Juan 3:16" : "Ej. 1"}
+              placeholder={isCitationType ? t("panel.form.input.placeholder_verse") : t("panel.form.input.placeholder_question")}
               autoComplete="off"
               role="combobox"
               aria-expanded={optionsOpen}
@@ -190,7 +192,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
             )}
           </div>
           <button type="submit" disabled={loading}>
-            {loading ? "Cargando..." : "Mostrar"}
+            {loading ? t("panel.form.button.loading") : t("panel.form.button.submit")}
           </button>
         </div>
         <p id="status" className="status" role="status">
@@ -199,24 +201,24 @@ export default function PresentationForm({ memories, swordplays }: Props) {
       </form>
 
       <ActionSection
-        title="Presentación"
-        ariaLabel="Controles de presentación"
+        title={t("panel.form.preview_action_title")}
+        ariaLabel={t("panel.form.preview_action_title")}
         className="presentation-actions"
         actions={[
           {
-            label: "Abrir previsualización",
+            label: t("panel.form.actions.open"),
             className: "secondary",
             onClick: () => {
               previewWindowRef.current = window.open("/preview", "_blank");
               setStatus(
                 previewWindowRef.current
-                  ? "Previsualización abierta."
-                  : "El navegador bloqueó la pestaña. Permite ventanas emergentes e inténtalo de nuevo.",
+                  ? t("panel.form.status.ready")
+                  : t("panel.form.status.error"),
               );
             },
           },
           {
-            label: "Limpiar pantalla",
+            label: t("panel.form.actions.clear"),
             className: "secondary",
             disabled: !currentQuestion,
             onClick: clear,
@@ -225,13 +227,13 @@ export default function PresentationForm({ memories, swordplays }: Props) {
       />
 
       <ActionSection
-        title="Resultado de la respuesta"
-        ariaLabel="Resultado de la respuesta"
+        title={t("panel.form.effect_action_title")}
+        ariaLabel={t("panel.form.effect_action_title")}
         className="answer-actions"
         actionsClassName="answer-buttons"
         actions={[
           {
-            label: "Correcta",
+            label: t("panel.form.actions.correct"),
             className: "correct",
             icon: "✓",
             disabled: !currentQuestion,
@@ -242,7 +244,7 @@ export default function PresentationForm({ memories, swordplays }: Props) {
               }),
           },
           {
-            label: "Incorrecta",
+            label: t("panel.form.actions.incorrect"),
             className: "incorrect",
             icon: "✕",
             disabled: !currentQuestion,

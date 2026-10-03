@@ -1,19 +1,23 @@
 ---
+import { useTranslations } from "@utils/translations";
 import { getLiveCollection } from "astro:content";
+import { YEAR } from "astro:env/server";
 import PresentationForm from "./PresentationForm";
+
+const { t } = useTranslations();
 
 const [memories, swordplays] = await Promise.all([
   getLiveCollection("memories"),
   getLiveCollection("swordplays"),
 ]);
 if (!memories?.entries || !swordplays?.entries) {
-  throw new Error("No se pudieron cargar las entradas de memoria y swordplay.");
+  throw new Error(t("errors.entries"));
 }
 ---
 
 <section class="panel">
-  <p class="eyebrow">Certamen JeeS 2026</p>
-  <h1>¿Qué pregunta quieres mostrar?</h1>
+  <p class="eyebrow">{t("panel.brand", { year: YEAR })}</p>
+  <h1>{t("panel.title")}</h1>
 
   <PresentationForm
     client:load
