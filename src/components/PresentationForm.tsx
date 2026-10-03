@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { PRESENTATION_CHANNEL, QuestionTypeLabels } from "../constants";
-import type { PresentationEvent, QuestionItem } from "../types";
-import { EventType, QuestionTypes } from "../types";
+import { PRESENTATION_CHANNEL, QuestionTypeLabels } from "@constants";
+import type { PresentationEvent, QuestionItem } from "@types";
+import { EventType, QuestionTypes } from "@types";
 import ActionSection from "./ActionSection";
 
 type Entry = {

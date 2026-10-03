@@ -1,10 +1,4 @@
-export type Action = {
-  label: string;
-  className: string;
-  disabled?: boolean;
-  icon?: string;
-  onClick: () => void;
-};
+import type { Action } from "@types";
 
 type Props = {
   title: string;

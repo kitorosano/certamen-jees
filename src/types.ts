@@ -26,3 +26,11 @@ export type PresentationEvent = {
 };
 
 export type EffectType = EventType.EFFECT_CORRECT | EventType.EFFECT_INCORRECT;
+
+export type Action = {
+  label: string;
+  className: string;
+  disabled?: boolean;
+  icon?: string;
+  onClick: () => void;
+};
