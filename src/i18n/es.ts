@@ -4,8 +4,20 @@ export const es = {
   brand: "Certamen JeeS {{year}}",
   api: {
     "400": "Tipo o identificador inválido.",
+    "401": "No autorizado.",
     "404": "No se encontró la pregunta solicitada.",
     "502": "No se pudo cargar la pregunta.",
+  },
+  login: {
+    title: "Acceso al panel",
+    description: "Ingresa la contraseña para continuar.",
+    form: {
+      password: {
+        label: "Contraseña",
+        error: "La contraseña no es correcta.",
+      },
+      button: "Ingresar",
+    },
   },
   panel: {
     title: "¿Qué pregunta quieres mostrar?",

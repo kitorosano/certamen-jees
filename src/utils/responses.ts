@@ -6,6 +6,10 @@ export function Response400(): Response {
   return Response.json({ error: t("api.400") }, { status: 400 });
 }
 
+export function Response401(): Response {
+  return Response.json({ error: t("api.401") }, { status: 401 });
+}
+
 export function Response404(): Response {
   return Response.json({ error: t("api.404") }, { status: 404 });
 }

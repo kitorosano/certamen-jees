@@ -18,6 +18,7 @@ Panel web para presentar preguntas y contenidos del Certamen JeeS 2026. La aplic
   - Superposición roja para respuestas incorrectas.
 - Endpoint HTTP para consultar una entrada por tipo e identificador.
 - Adaptador oficial de Vercel para producción.
+- Panel protegido por contraseña mediante la variable de entorno `PASSWORD`.
 
 ## Requisitos
 
@@ -47,14 +48,17 @@ Abre [http://localhost:4321](http://localhost:4321). También puedes iniciar Ast
 pnpm astro dev --host 0.0.0.0 --port 4321
 ```
 
+Configura `PASSWORD` en `.env` o en las variables de entorno del despliegue. El acceso al panel se valida en el servidor y se mantiene mediante una cookie segura `HttpOnly`; no se guarda la contraseña en `localStorage`.
+
 ## Uso básico
 
-1. Abre la página principal en [http://localhost:4321](http://localhost:4321).
+1. Abre la página principal en [http://localhost:4321](http://localhost:4321) e ingresa la contraseña configurada en `PASSWORD`.
 2. Pulsa **Abrir previsualización** para abrir `/preview` en otra pestaña o ventana. Esta vista es la que se puede proyectar.
 3. En el panel, selecciona **Pregunta**, **Versículo de Memoria** o **Esgrima Bíblico**.
 4. Introduce el identificador de la entrada y pulsa **Mostrar**. Para **Versículo de Memoria** y **Esgrima Bíblico**, escribe o selecciona la cita bíblica (por ejemplo, `Juan 3:16`) usando el autocompletado.
 5. Usa **Correcta** o **Incorrecta** para mostrar el efecto visual correspondiente.
 6. Pulsa **Limpiar pantalla** antes de presentar la siguiente entrada.
+7. Usa **Cerrar sesión** cuando termines.
 
 La vista de previsualización también puede abrirse directamente en `/preview`, aunque debe existir una ventana del panel abierta para enviarle contenido.
 
@@ -62,8 +66,11 @@ La vista de previsualización también puede abrirse directamente en `/preview`,
 
 | Ruta | Propósito |
 | --- | --- |
-| `/` | Panel de control y previsualización integrada. |
+| `/` | Panel de control y previsualización integrada (requiere autenticación). |
+| `/login` | Formulario de acceso al panel. |
 | `/preview` | Vista independiente para la presentación. |
+| `/api/login` | Valida `PASSWORD` y crea la sesión. |
+| `/api/logout` | Cierra la sesión actual. |
 | `/api/questions/:type/:id` | Devuelve una entrada JSON validada. |
 
 Los valores válidos para `:type` son `questions`, `memories` y `swordplays`. Por ejemplo:

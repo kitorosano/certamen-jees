@@ -24,6 +24,10 @@ if (!memories?.entries || !swordplays?.entries) {
     memories={memories.entries.map(({ data }) => data)}
     swordplays={swordplays.entries.map(({ data }) => data)}
   />
+
+  <form class="logout" method="post" action="/api/logout">
+    <button type="submit">Cerrar sesión</button>
+  </form>
 </section>
 
 <style is:global>
@@ -233,5 +237,16 @@ if (!memories?.entries || !swordplays?.entries) {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+  }
+  .logout {
+    align-items: flex-start;
+    border-top: 1px solid #ffffff1c;
+    padding-top: 1rem;
+  }
+  .logout button {
+    min-height: 2.25rem;
+    padding: 0.5rem 0.75rem;
+    background: #263247;
+    font-size: 0.85rem;
   }
 </style>

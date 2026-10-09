@@ -17,6 +17,7 @@ export default defineConfig({
         access: "public",
         default: new Date().getFullYear(),
       }),
+      PASSWORD: envField.string({ context: "server", access: "secret" }),
     },
     validateSecrets: true,
   },
